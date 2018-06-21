@@ -49,16 +49,18 @@ class QLearner():
         i = 0  # tracker
         # total_reward = 0  # track total reward over all interations
         food_eaten = 0
+        eaten_states = []
         num_steps = 0
         error = []
 
+        # while self.trained == False
         while i < 10:
 
             # select random initial state
             current_state = np.random.randint(0,4)
 
-            # do while all 2 foods have not been eaten
-            while food_eaten != 2:
+            # do while all 2 foods have not been eaten..once eaten both, at the 'exit state' 
+            while food_eaten < 2:
 
                # print "current state: ", current_state
 
@@ -81,22 +83,18 @@ class QLearner():
                 self.Q[current_state][action] = self.R[current_state][action] + gamma * max_reward
 
                 if self.R[current_state][action] == 1:
-                    # remove reward from this state in R -- food has been eaten
-                    self.R[current_state][action] = 0
-                    food_eaten = food_eaten + 1
+                    
+                    # check if this state has already been eaten
+                    if (current_state, action) not in eaten_states: 
+                        food_eaten = food_eaten + 1  # increase total eaten
+                        eaten_states.append((current_state, action))  # add state action pair to eaten list
 
-                    print ("food eaten: ", food_eaten)
 
-               # self.display_Q()
-
+                # update current state to chosen action
                 current_state = action
 
                 # increment number of steps this time through grid
                 num_steps = num_steps + 1
-                print (num_steps)
-                print ("")
-                #if current_state == 3:
-                    #print "reached the exit\n\n"
 
             error.append(num_steps - 2)
             i = i + 1  # update tracker
@@ -105,7 +103,8 @@ class QLearner():
         print (error)
 
     def display_Q( self ):
-        print ("\n", self.Q, "\n")
+        print (self.Q)
+        print ("")
 
     def display_R( self ):
 
