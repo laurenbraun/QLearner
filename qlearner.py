@@ -1,4 +1,4 @@
-# L.Braun
+# L.Braun 2018
 # Objects of Qlearner class can learn the optimal route of exiting a maze
 # Data could be replaced with a different object, such as
 # a chemical reaction network.
@@ -12,39 +12,45 @@ from numpy import *
 
 class QLearner():
 
-    def __init__(self):
+    def __init__( self ):
 
         # reward matrix for a 2x2 grid
-        self.R = np.full((4,4), -1, dtype = int)
+        #self.R = np.full((4,4), -1, dtype = int)
+        self.R = None
 
         # state-action matrix
-        self.Q = np.zeros((4,4), dtype = int)
+        #self.Q = np.zeros((4,4), dtype = int)
+        self.Q = None
 
         self.next_states = None
 
         self.trained = False  # switch to true when Q matrix is trained
 
 
-    def load_maze( self ):
+    def load_maze( self, R_data, next_data, meta_data ):
+        """ load matrix data into class data members. R_data, next_data are .npy array files.
+            meta_data is a txt file that gives shape of matrices to initialize Q """
 
-        # TODO: make this method read in matrix data from a file
+        # initialize matrices from shape given in file
+        with open(meta_data, 'r') as mfile:
+            
+            array_shape = mfile.readlines()  # list of each line, each line is one int
+            x = int(array_shape[0])
+            y = int(array_shape[1])
 
-        # initialize reward matrix
+            # initialize Q matrix of shape (x,y)
+            self.Q = np.zeros((x,y), dtype = int)
 
-        self.R = [[-1, 1, 0, -1],
-                  [0, -1, -1, 1],
-                  [0, -1, -1, 1],
-                  [-1, 0, 0, 1]]
+        # load data into reward matrix
+        self.R = np.load(R_data)
 
-        # initialize next states
+        # load next_states matrix
+        self.next_states = np.load(next_data)
 
-        self.next_states = np.array([[1, 2],
-                                     [0, 3],
-                                     [0, 3],
-                                     [3, 3]])
 
-    def train(self, gamma):
-        """ train Q """
+
+    def train( self, gamma ):
+        """ train Q. gamma is an int between 0 and 1 """
 
         i = 0  # tracker
         # total_reward = 0  # track total reward over all interations
