@@ -22,12 +22,10 @@ class QLearner():
         #self.Q = np.zeros((4,4), dtype = int)
         self.Q = None
 
-        self.next_states = None
-
         self.trained = False  # switch to true when Q matrix is trained
 
 
-    def load_maze( self, R_data, next_data, meta_data ):
+    def load_maze( self, R_data, meta_data ):
         """ load matrix data into class data members. R_data, next_data are .npy array files.
             meta_data is a txt file that gives shape of matrices to initialize Q """
 
@@ -44,9 +42,14 @@ class QLearner():
         # load data into reward matrix
         self.R = np.load(R_data)
 
-        # load next_states matrix
-        self.next_states = np.load(next_data)
 
+    
+    def get_possible_actions( self, state ):
+        """ return array of possible actions to take from state given in arg """
+
+        all_actions = self.R[state]  # get row from R matrix for this state
+        valid_actions = np.where(all_actions >= 0)  # save only valid moves
+        return valid_actions
 
 
     def train( self, gamma ):
@@ -67,11 +70,13 @@ class QLearner():
 
             # do while all 2 foods have not been eaten..once eaten both, at the 'exit state' 
             while food_eaten < 2:
-
+                
                # print "current state: ", current_state
 
                 # select an action
-                action = np.random.choice(self.next_states[current_state])
+                pos_acts = self.get_possible_actions(current_state)
+                action = np.random.choice(pos_acts[0])
+               
                # print "action: ", action
 
                 # add reward for this action
