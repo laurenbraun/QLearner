@@ -5,22 +5,21 @@
 
 from qlearner import QLearner
 
-a_learner = QLearner()
-a_learner.load_maze('/u/braun/tlab/QLearner/data/reward_4x4.npy', '/u/braun/tlab/QLearner/data/meta_4x4.txt')
+my_learner = QLearner()
+my_learner.load_maze('/u/braun/tlab/QLearner/data/reward_4x4.npy', '/u/braun/tlab/QLearner/data/meta_4x4.txt')
 
-print ("testing data load\n\n")
+#print ("testing data load\n\n")
 
-a_learner.display_Q()
-a_learner.display_R()
+my_learner.display_Q()
+my_learner.display_R()
 
-#print ("begin training...")
+print ("begin training...")
 
-#error = a_learner.train(0.7)
+reward = my_learner.train(0.7)
 
-#print "\n\nall error values: ", error
+my_learner.display_Q()
+my_learner.display_R()
 
-#a_learner.train(0.7)
 
 
-#a_learner.display_Q()
-#a_learner.display_R()
+
