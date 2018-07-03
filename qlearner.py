@@ -59,14 +59,16 @@ class QLearner():
 
         i = 0  # tracker
         total_rewards = []  # track reward total over all iterations
-        food_eaten = 0
-        eaten_states = []
 
         # while self.trained == False
         while i < 500:
 
             # select random initial state
             current_state = np.random.randint(0,4)
+            
+            # initialize food trackers for this round of solving the maze
+            food_eaten = 0
+            eaten_states = []
 
             # do while all 2 foods have not been eaten..once eaten both, at the 'exit state' 
             while food_eaten < 2:
@@ -93,6 +95,9 @@ class QLearner():
                 if (np.max(self.Q) > 0):
                     curr_reward = np.sum(self.Q/np.max(self.Q) * 100)  # get current rewards from Q
                     total_rewards.append(curr_reward)  # add this round's reward to total reward list
+                
+                else:
+                    total_rewards.append(0)
 
                 
                 # check if we are at a food item
@@ -112,6 +117,35 @@ class QLearner():
 
 
         return total_rewards
+
+
+    def test( self ):
+        """ test training to see if optimal path was found """
+
+        current_state = 0
+        next_state = 0
+
+        steps = [current_state]
+        
+        food_eaten = 0
+
+        while food_eaten < 2:
+
+            q_vals = []
+
+            x = 0
+            while x < len(self.Q[current_state]):
+                q_vals.append(self.Q[current_state][x])
+                x = x + 1
+
+            next_state = q_vals.index(max(q_vals))
+
+            food_eaten = food_eaten + 1
+           
+            steps.append(next_state)
+            current_state = next_state
+
+        return steps
 
 
 
