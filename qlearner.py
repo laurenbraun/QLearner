@@ -14,12 +14,10 @@ class QLearner():
 
     def __init__( self ):
 
-        # reward matrix for a 2x2 grid
-        #self.R = np.full((4,4), -1, dtype = int)
+        # reward matrix 
         self.R = None
 
         # state-action matrix
-        #self.Q = np.zeros((4,4), dtype = int)
         self.Q = None
 
         self.trained = False  # switch to true when Q matrix is trained
@@ -39,31 +37,33 @@ class QLearner():
             # initialize Q matrix of shape (x,y)
             self.Q = np.zeros((x,y), dtype = int)
 
-        # load data into reward matrix
+
+        # load numpy array datafile into reward matrix
         self.R = np.load(R_data)
 
 
     
     def get_possible_actions( self, state ):
-        """ return array of possible actions to take from state given in arg """
+        """ return list of possible actions to take from state given in arg """
 
-        all_actions = self.R[state]  # get row from R matrix for this state
+        # get row from R matrix for this state
+        all_actions = self.R[state]
         valid_actions = np.where(all_actions >= 0)  # save only valid moves
-        return valid_actions
+        
+        return valid_actions[0]
+
 
 
     def train( self, gamma ):
         """ train Q. gamma is an int between 0 and 1 """
 
         i = 0  # tracker
-        # total_reward = 0  # track total reward over all interations
+        total_rewards = []  # track reward total over all iterations
         food_eaten = 0
         eaten_states = []
-        num_steps = 0
-        error = []
 
         # while self.trained == False
-        while i < 10:
+        while i < 500:
 
             # select random initial state
             current_state = np.random.randint(0,4)
@@ -71,30 +71,33 @@ class QLearner():
             # do while all 2 foods have not been eaten..once eaten both, at the 'exit state' 
             while food_eaten < 2:
                 
-               # print "current state: ", current_state
-
                 # select an action
                 pos_acts = self.get_possible_actions(current_state)
-                action = np.random.choice(pos_acts[0])
-               
-               # print "action: ", action
-
-                # add reward for this action
-                # total_reward += self.R[current_state][action]
+                action = int(np.random.choice(pos_acts))
+            
+                # consider this action as current state and get next possible actions
+                next_pos_acts = self.get_possible_actions(action)
 
                 # get all possible next Q values
                 next_q = []
-                for next_possible in self.next_states[action]:
-                    next_q.append(self.Q[action][next_possible])
+                for maybe in next_pos_acts:
+                    next_q.append(self.Q[action][maybe])
 
                 # get max Q value
                 max_reward = max(next_q)
-               # print "max reward of next action: ", max_reward
 
+                # update Q matrix
                 self.Q[current_state][action] = self.R[current_state][action] + gamma * max_reward
 
+                # check to make sure we don't divide by 0
+                if (np.max(self.Q) > 0):
+                    curr_reward = np.sum(self.Q/np.max(self.Q) * 100)  # get current rewards from Q
+                    total_rewards.append(curr_reward)  # add this round's reward to total reward list
+
+                
+                # check if we are at a food item
                 if self.R[current_state][action] == 1:
-                    
+                
                     # check if this state has already been eaten
                     if (current_state, action) not in eaten_states: 
                         food_eaten = food_eaten + 1  # increase total eaten
@@ -103,15 +106,15 @@ class QLearner():
 
                 # update current state to chosen action
                 current_state = action
-
-                # increment number of steps this time through grid
-                num_steps = num_steps + 1
-
-            error.append(num_steps - 2)
+                
             i = i + 1  # update tracker
 
-        #return error
-        print (error)
+
+
+        return total_rewards
+
+
+
 
     def display_Q( self ):
         print (self.Q)
