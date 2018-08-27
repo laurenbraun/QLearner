@@ -1,5 +1,7 @@
 # L.Braun
 # maze class to be learned by a learning agent
+# 7/3: NOT USING THIS CLASS
+
 
 import numpy as np
 from numpy import *

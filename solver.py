@@ -21,12 +21,16 @@ reward = my_learner.train(0.7)
 my_learner.display_Q()
 my_learner.display_R()
 
-steps = my_learner.test()
-print "steps"
-print steps
-print ""
+steps = my_learner.test(7)  # 7 foods in 4x4 maze
+print ("steps")
+print (steps)
+print ("")
 
-#plt.plot(reward)
-#plt.show()
+plt.hist(reward, 50, normed=1, facecolor='g', alpha=0.75)
+plt.xlabel('Episodes required to reach 200')
+plt.ylabel('Frequency')
+plt.title('Histogram')
+plt.show()
+
 
 

@@ -1,5 +1,7 @@
 # L.Braun
 # grid world to be navigated by a learner
+# 7/3: NOT USING THIS CLASS
+
 
 #import numpy as np
 #grid = np.zeros(shape=(4,4))
@@ -75,7 +77,6 @@ if search(grid,0,3) == False:
 print 'updated maze:\n'
 display(grid)
 print '' 
-
 if search(grid,0,3) == False:
     print 'returned false.\n'
 

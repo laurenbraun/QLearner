@@ -119,7 +119,7 @@ class QLearner():
         return total_rewards
 
 
-    def test( self ):
+    def test( self, num_foods ):
         """ test training to see if optimal path was found """
 
         current_state = 0
@@ -129,7 +129,7 @@ class QLearner():
         
         food_eaten = 0
 
-        while food_eaten < 2:
+        while food_eaten < num_foods:  
 
             q_vals = []
 
